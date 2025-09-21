@@ -1,0 +1,7 @@
+ag2[gemini]>=0.8
+fastapi>=0.110
+uvicorn[standard]>=0.22
+python-dotenv>=1.0
+streamlit>=1.37
+requests>=2.31
+

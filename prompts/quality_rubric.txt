@@ -1,0 +1,9 @@
+CODE QUALITY RUBRIC:
+- Use only Python standard library
+- No input() or interactive I/O; prefer functions with parameters
+- Modules: snake_case.py; Classes: CamelCase; functions/vars: snake_case
+- Provide module-level docstring and function docstrings (one-liners ok)
+- Keep lines <= 100 chars where practical
+- Include README.md with usage instructions
+- Include at least one simple test (unittest) if any logic exists
+

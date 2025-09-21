@@ -1,0 +1,3 @@
+PHASE 1 – FILEPLAN (JSON ONLY): Return a JSON object with key 'files' listing all files to create.
+Each entry: {path: string (relative to project_dir), purpose: string}. No code blocks.
+
