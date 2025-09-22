@@ -71,8 +71,8 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
         "Topic :: Software Development :: User Interfaces",
-        "Framework :: Streamlit",
-        "Framework :: FastAPI",
+        "Topic :: Software Development :: Libraries :: Application Frameworks",
+        "Topic :: Software Development :: Tools",
     ],
     keywords=[
         "ai", "artificial-intelligence", "code-generation", "multi-agent", 
