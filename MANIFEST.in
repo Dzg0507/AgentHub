@@ -1,0 +1,14 @@
+include README.md
+include LICENSE
+include requirements.txt
+include *.md
+include *.txt
+include *.yml
+include *.yaml
+recursive-include .github *
+recursive-include config *
+recursive-include examples *
+recursive-include docs *
+recursive-include prompts *
+recursive-include templates *
+recursive-include workspace *

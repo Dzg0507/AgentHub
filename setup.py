@@ -11,11 +11,29 @@ long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
 # Read requirements
 requirements = []
-with open("requirements.txt", "r", encoding="utf-8") as f:
-    for line in f:
-        line = line.strip()
-        if line and not line.startswith("#"):
-            requirements.append(line)
+requirements_file = this_directory / "requirements.txt"
+if requirements_file.exists():
+    with open(requirements_file, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#"):
+                requirements.append(line)
+else:
+    # Fallback requirements if file doesn't exist
+    requirements = [
+        "ag2[gemini]>=0.8",
+        "fastapi>=0.110",
+        "uvicorn[standard]>=0.22",
+        "python-dotenv>=1.0",
+        "streamlit>=1.37",
+        "requests>=2.31",
+        "psutil>=5.9",
+        "google-generativeai>=0.3.0",
+        "pytest>=7.0",
+        "pytest-cov>=4.0",
+        "flake8>=6.0",
+        "black>=23.0",
+    ]
 
 setup(
     name="agent-control-hub",
@@ -59,7 +77,7 @@ setup(
     },
     include_package_data=True,
     package_data={
-        "": ["*.txt", "*.md", "*.yml", "*.yaml"],
+        "": ["*.txt", "*.md", "*.yml", "*.yaml", "*.in"],
     },
     zip_safe=False,
 )
