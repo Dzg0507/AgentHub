@@ -1,3 +1,27 @@
 PHASE 1 – FILEPLAN (JSON ONLY): Return a JSON object with key 'files' listing all files to create.
 Each entry: {path: string (relative to project_dir), purpose: string}. No code blocks.
 
+CRITICAL INSTRUCTIONS FOR OPEN MODELS:
+- Respond ONLY with valid JSON
+- NO markdown formatting
+- NO code blocks (```json or ```)
+- NO explanatory text before or after
+- NO comments in JSON
+- Start directly with { and end with }
+- Use double quotes for all strings
+- Ensure proper JSON syntax
+
+EXAMPLE FORMAT:
+{
+  "files": [
+    {
+      "path": "README.md",
+      "purpose": "Project documentation and setup instructions"
+    },
+    {
+      "path": "app.py", 
+      "purpose": "Main application entry point"
+    }
+  ]
+}
+

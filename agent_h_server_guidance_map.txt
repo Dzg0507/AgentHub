@@ -1,0 +1,6 @@
+Guidance levels used by the server:
+- minimal: terse rules, fewer turns, less context reads
+- standard: balanced defaults
+- explicit: detailed prompts, more turns, generous context reads
+
+
