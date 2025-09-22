@@ -80,9 +80,22 @@ Agent_Control_Hub/
    ```
 
 4. **Set up environment variables**:
-   Create a `.env` file in the project root:
+   ```bash
+   # Copy the example environment file
+   cp config/env.example .env
+   
+   # Edit .env with your API keys
+   # You only need to set the keys for the providers you want to use
+   ```
+   
+   Example `.env` file:
    ```env
+   # LLM Provider Configuration
+   LLM_PROVIDER=gemini
    GOOGLE_API_KEY=your_google_api_key_here
+   TOGETHER_API_KEY=your_together_api_key_here
+   OPENROUTER_API_KEY=your_openrouter_api_key_here
+   LLM_MODEL=gemini-1.5-flash
    ```
 
 ## Usage
