@@ -69,6 +69,8 @@ Agent_Control_Hub/
 - Python 3.8 or higher
 - Git
 
+> 📖 **New to Agent Control Hub?** Check out our [Complete Setup Guide](SETUP_GUIDE.md) for detailed step-by-step instructions with screenshots!
+
 ### Installation
 
 1. **Clone the repository**:
@@ -130,6 +132,8 @@ This will automatically:
 - ✅ Provide unified shutdown with Ctrl+C
 
 ## 🎨 UI Features
+
+> 📸 **Want to see what it looks like?** Check out our [Visual Guide](VISUAL_GUIDE.md) with detailed screenshots of every feature!
 
 ### 🏠 Dashboard
 - Welcome page with project creation
