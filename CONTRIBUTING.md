@@ -2,210 +2,346 @@
 
 Thank you for your interest in contributing to Agent Control Hub! This document provides guidelines and information for contributors.
 
-## Table of Contents
+## 🤝 How to Contribute
 
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [Contributing Guidelines](#contributing-guidelines)
-- [Pull Request Process](#pull-request-process)
-- [Issue Reporting](#issue-reporting)
-- [Development Workflow](#development-workflow)
+### Reporting Issues
 
-## Code of Conduct
+Before creating an issue, please:
 
-This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). By participating, you are expected to uphold this code.
+1. **Search existing issues** to avoid duplicates
+2. **Check the documentation** to see if your question is answered
+3. **Use the issue templates** when available
 
-## Getting Started
+When creating an issue, please include:
 
-1. Fork the repository
-2. Clone your fork: `git clone https://github.com/your-username/Agent_Control_Hub.git`
-3. Create a new branch: `git checkout -b feature/your-feature-name`
-4. Make your changes
-5. Test your changes
-6. Submit a pull request
+- **Clear description** of the problem or feature request
+- **Steps to reproduce** (for bugs)
+- **Expected vs actual behavior**
+- **Environment details** (OS, Python version, etc.)
+- **Screenshots** if applicable
 
-## Development Setup
+### Suggesting Enhancements
 
-### Prerequisites
+We welcome enhancement suggestions! Please:
 
-- Python 3.8 or higher
-- pip (Python package installer)
-- Git
+1. **Check existing discussions** first
+2. **Provide clear use cases** and benefits
+3. **Consider implementation complexity**
+4. **Be specific** about the desired outcome
 
-### Installation
+### Code Contributions
 
-1. Clone the repository:
+#### Getting Started
+
+1. **Fork the repository**
+2. **Clone your fork**:
    ```bash
-   git clone https://github.com/your-username/Agent_Control_Hub.git
-   cd Agent_Control_Hub
+   git clone https://github.com/your-username/AgentHub.git
+   cd AgentHub
    ```
 
-2. Create a virtual environment:
+3. **Create a virtual environment**:
    ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
    ```
 
-3. Install dependencies:
+4. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
+   pip install -e ".[dev]"
    ```
 
-4. Set up environment variables:
+5. **Set up pre-commit hooks**:
    ```bash
-   cp env.example .env
-   # Edit .env with your API keys and configuration
+   pre-commit install
    ```
 
-5. Run tests to verify installation:
+#### Development Workflow
+
+1. **Create a feature branch**:
    ```bash
-   python -m pytest tests/
+   git checkout -b feature/your-feature-name
    ```
 
-## Contributing Guidelines
+2. **Make your changes** following our coding standards
 
-### Code Style
+3. **Add tests** for new functionality
 
-- Follow PEP 8 style guidelines
-- Use type hints where appropriate
-- Write clear, descriptive variable and function names
-- Add docstrings to all public functions and classes
-- Keep functions small and focused on a single responsibility
+4. **Run tests** to ensure everything works:
+   ```bash
+   pytest tests/ -v
+   ```
 
-### Testing
+5. **Format and lint your code**:
+   ```bash
+   black .
+   flake8 .
+   mypy src/
+   ```
 
-- Write unit tests for new functionality
-- Ensure all tests pass before submitting a PR
-- Aim for good test coverage (80%+)
-- Use descriptive test names that explain what is being tested
+6. **Commit your changes**:
+   ```bash
+   git add .
+   git commit -m "feat: add your feature description"
+   ```
+
+7. **Push to your fork**:
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+
+8. **Create a Pull Request**
+
+## 📋 Coding Standards
+
+### Python Code Style
+
+- **Follow PEP 8** guidelines
+- **Use Black** for code formatting
+- **Use type hints** where appropriate
+- **Write docstrings** for all functions and classes
+- **Keep functions small** and focused
+- **Use meaningful variable names**
+
+### Code Formatting
+
+We use **Black** for code formatting. Run it before committing:
+
+```bash
+black .
+```
+
+### Linting
+
+We use **flake8** for linting. Run it to check for issues:
+
+```bash
+flake8 .
+```
+
+### Type Checking
+
+We use **mypy** for type checking:
+
+```bash
+mypy src/
+```
 
 ### Documentation
 
-- Update README.md if you add new features
-- Add docstrings to new functions and classes
-- Update API documentation if applicable
-- Include examples in your docstrings
+- **Write clear docstrings** for all public functions
+- **Update README.md** if adding new features
+- **Add examples** in docstrings where helpful
+- **Keep comments up to date**
 
-### Commit Messages
+## 🧪 Testing
 
-Use clear, descriptive commit messages:
+### Writing Tests
 
-```
-feat: add support for OpenRouter API
-fix: resolve issue with file path handling
-docs: update installation instructions
-test: add unit tests for LLM provider
-refactor: improve error handling in pipeline
-```
-
-## Pull Request Process
-
-1. **Create a feature branch** from `main`
-2. **Make your changes** following the guidelines above
-3. **Write tests** for your changes
-4. **Update documentation** as needed
-5. **Run the test suite** to ensure everything passes
-6. **Submit a pull request** with a clear description
-
-### Pull Request Template
-
-When creating a pull request, please include:
-
-- **Description**: What changes were made and why
-- **Type**: Bug fix, feature, documentation, etc.
-- **Testing**: How the changes were tested
-- **Breaking Changes**: Any breaking changes (if applicable)
-- **Checklist**: Confirm all requirements are met
-
-## Issue Reporting
-
-When reporting issues, please include:
-
-- **Description**: Clear description of the issue
-- **Steps to Reproduce**: How to reproduce the issue
-- **Expected Behavior**: What should happen
-- **Actual Behavior**: What actually happens
-- **Environment**: OS, Python version, dependencies
-- **Screenshots**: If applicable
-
-## Development Workflow
-
-### Adding New LLM Providers
-
-1. Add provider support in `llm_provider.py`
-2. Implement the `_chat_<provider>` method
-3. Add provider to `get_available_models()`
-4. Add tests for the new provider
-5. Update documentation
-
-### Adding New Agents
-
-1. Create agent class in `agents/factory.py`
-2. Add system message and configuration
-3. Add to `create_agents()` function
-4. Write tests for the new agent
-5. Update documentation
-
-### Adding New Pipeline Steps
-
-1. Add step function in `services/pipeline.py`
-2. Add step to `pipeline_steps` list
-3. Implement error handling and logging
-4. Write tests for the new step
-5. Update documentation
-
-## Testing
+- **Write tests** for all new functionality
+- **Test edge cases** and error conditions
+- **Use descriptive test names**
+- **Keep tests simple** and focused
+- **Mock external dependencies**
 
 ### Running Tests
 
 ```bash
 # Run all tests
-python -m pytest tests/
+pytest tests/ -v
 
 # Run specific test file
-python -m pytest tests/test_llm_provider.py
+pytest tests/test_basic.py -v
 
 # Run with coverage
-python -m pytest tests/ --cov=. --cov-report=html
+pytest tests/ --cov=src --cov-report=html
 
-# Run with verbose output
-python -m pytest tests/ -v
+# Run only failed tests
+pytest --lf
 ```
 
 ### Test Structure
 
-- Unit tests go in `tests/` directory
-- Test files should be named `test_*.py`
-- Test classes should be named `Test*`
-- Test methods should be named `test_*`
+```python
+def test_function_name():
+    """Test description of what this test does"""
+    # Arrange
+    input_data = "test"
+    
+    # Act
+    result = function_under_test(input_data)
+    
+    # Assert
+    assert result == expected_output
+```
 
-## Code Review Process
+## 📝 Commit Messages
 
-1. All pull requests require review
-2. At least one approval is required
-3. All CI checks must pass
-4. Code should follow project conventions
-5. Tests should be included and passing
+We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
-## Release Process
+### Format
 
-1. Update version numbers
-2. Update CHANGELOG.md
-3. Create release tag
-4. Build and test release
-5. Deploy to production
+```
+<type>[optional scope]: <description>
 
-## Getting Help
+[optional body]
 
-- Check existing issues and discussions
-- Join our community discussions
-- Contact maintainers for urgent issues
+[optional footer(s)]
+```
 
-## License
+### Types
 
-By contributing to Agent Control Hub, you agree that your contributions will be licensed under the MIT License.
+- **feat**: A new feature
+- **fix**: A bug fix
+- **docs**: Documentation changes
+- **style**: Code style changes (formatting, etc.)
+- **refactor**: Code refactoring
+- **test**: Adding or updating tests
+- **chore**: Maintenance tasks
+
+### Examples
+
+```bash
+feat: add support for Rust language
+fix: resolve memory leak in pipeline processing
+docs: update API documentation
+test: add unit tests for LLM provider
+chore: update dependencies
+```
+
+## 🔄 Pull Request Process
+
+### Before Submitting
+
+1. **Ensure tests pass** locally
+2. **Format and lint** your code
+3. **Update documentation** if needed
+4. **Write a clear description** of your changes
+5. **Link related issues** if applicable
+
+### PR Description Template
+
+```markdown
+## Description
+Brief description of the changes
+
+## Type of Change
+- [ ] Bug fix
+- [ ] New feature
+- [ ] Breaking change
+- [ ] Documentation update
+
+## Testing
+- [ ] Tests pass locally
+- [ ] New tests added (if applicable)
+- [ ] Manual testing completed
+
+## Checklist
+- [ ] Code follows style guidelines
+- [ ] Self-review completed
+- [ ] Documentation updated
+- [ ] No breaking changes (or clearly documented)
+```
+
+### Review Process
+
+1. **Automated checks** must pass
+2. **Code review** by maintainers
+3. **Address feedback** promptly
+4. **Keep PRs focused** and reasonably sized
+5. **Respond to comments** constructively
+
+## 🏗️ Project Structure
+
+Understanding the codebase:
+
+```
+src/
+├── llm/           # LLM provider abstraction
+├── ui/            # User interface components
+└── main.py        # Main entry point
+
+agents/            # Agent definitions and factory
+services/          # Business logic services
+core/              # Core configuration
+models/            # Pydantic response models
+routers/           # FastAPI routers
+server/            # FastAPI application
+utils/             # Utility functions
+tests/             # Test files
+```
+
+## 🎯 Areas for Contribution
+
+### High Priority
+
+- **New Language Support**: Add support for additional programming languages
+- **Agent Improvements**: Enhance existing agents or add new ones
+- **UI/UX Enhancements**: Improve the Streamlit interface
+- **Performance Optimization**: Speed up code generation and processing
+- **Testing**: Increase test coverage
+
+### Medium Priority
+
+- **Documentation**: Improve docs and add examples
+- **Error Handling**: Better error messages and recovery
+- **Configuration**: More flexible configuration options
+- **Monitoring**: Better logging and monitoring
+
+### Low Priority
+
+- **Code Cleanup**: Refactoring and code organization
+- **Dependencies**: Update and optimize dependencies
+- **CI/CD**: Improve automation and testing
+
+## 🐛 Bug Reports
+
+When reporting bugs, please include:
+
+1. **Clear title** describing the issue
+2. **Steps to reproduce** the problem
+3. **Expected behavior** vs actual behavior
+4. **Environment details**:
+   - OS and version
+   - Python version
+   - Package versions
+5. **Error messages** and logs
+6. **Screenshots** if applicable
+
+## 💡 Feature Requests
+
+When suggesting features:
+
+1. **Check existing issues** and discussions
+2. **Describe the use case** clearly
+3. **Explain the benefits** to users
+4. **Consider implementation** complexity
+5. **Provide examples** if possible
+
+## 📞 Getting Help
+
+- **GitHub Discussions**: For questions and general discussion
+- **GitHub Issues**: For bug reports and feature requests
+- **Code Review**: Ask questions in PR comments
+- **Documentation**: Check the docs folder
+
+## 🏆 Recognition
+
+Contributors will be recognized in:
+
+- **CONTRIBUTORS.md** file
+- **Release notes** for significant contributions
+- **GitHub contributor graph**
+
+## 📄 License
+
+By contributing, you agree that your contributions will be licensed under the same MIT License that covers the project.
+
+## 🙏 Thank You
+
+Thank you for contributing to Agent Control Hub! Your contributions help make this project better for everyone.
 
 ---
 
-Thank you for contributing to Agent Control Hub! 🚀
+**Questions?** Feel free to open a discussion or issue if you need help getting started!
