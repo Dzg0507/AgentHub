@@ -1,60 +1,65 @@
 #!/usr/bin/env python3
 """
-Setup script for Agent Hub Server
+Setup script for Agent Control Hub
 """
-import os
+from setuptools import setup, find_packages
 from pathlib import Path
 
-def main():
-    print("Agent Hub Server Setup")
-    print("=" * 30)
+# Read the README file
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text(encoding="utf-8")
 
-    # Check if .env file exists
-    env_file = Path(".env")
-    if not env_file.exists():
-        print("\n1. Setting up environment file...")
-        api_key = input("Enter your Google API Key (or press Enter to skip): ").strip()
+# Read requirements
+requirements = []
+with open("requirements.txt", "r", encoding="utf-8") as f:
+    for line in f:
+        line = line.strip()
+        if line and not line.startswith("#"):
+            requirements.append(line)
 
-        if api_key:
-            with open(env_file, 'w') as f:
-                f.write(f"GOOGLE_API_KEY={api_key}\n")
-            print("✓ .env file created with your API key")
-        else:
-            print("⚠ No API key provided. You'll need to set GOOGLE_API_KEY in .env file")
-            with open(env_file, 'w') as f:
-                f.write("# Add your Google API key here\n# GOOGLE_API_KEY=your_key_here\n")
-    else:
-        print("✓ .env file already exists")
-
-    # Check dependencies
-    print("\n2. Checking dependencies...")
-    try:
-        import fastapi
-        import uvicorn
-        import autogen
-        print("✓ All required packages are installed")
-    except ImportError as e:
-        print(f"✗ Missing package: {e}")
-        print("Please install required packages:")
-        print("pip install fastapi uvicorn")
-        return
-
-    # Check API key
-    print("\n3. Checking API key...")
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if api_key:
-        print("✓ Google API key is configured")
-    else:
-        print("⚠ Google API key not found in environment")
-        print("  Please set GOOGLE_API_KEY in your .env file")
-
-    print("\n4. Setup complete!")
-    print("\nTo start the server:")
-    print("  python agent_hub_server.py")
-    print("\nOr use the simple startup script:")
-    print("  python start_server.py")
-    print("\nServer will be available at: http://127.0.0.1:8000")
-    print("Web UI at: http://127.0.0.1:8000/ui")
-
-if __name__ == "__main__":
-    main()
+setup(
+    name="agent-control-hub",
+    version="1.0.0",
+    author="Agent Control Hub Team",
+    author_email="",
+    description="A centralized hub for multi-agent code creation, enhancement, and deployment",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/Dzg0507/AgentHub",
+    packages=find_packages(),
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Topic :: Software Development :: Code Generators",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ],
+    python_requires=">=3.8",
+    install_requires=requirements,
+    extras_require={
+        "dev": [
+            "pytest>=7.0.0",
+            "pytest-cov>=4.0.0",
+            "flake8>=5.0.0",
+            "black>=22.0.0",
+            "bandit>=1.7.0",
+            "safety>=2.0.0",
+        ],
+    },
+    entry_points={
+        "console_scripts": [
+            "agent-hub=src.main:main",
+        ],
+    },
+    include_package_data=True,
+    package_data={
+        "": ["*.txt", "*.md", "*.yml", "*.yaml"],
+    },
+    zip_safe=False,
+)

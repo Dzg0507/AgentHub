@@ -34,6 +34,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest pytest-cov flake8 black
+        pip install -e .
     
     - name: Lint with flake8
       run: |
@@ -46,9 +47,21 @@ jobs:
       run: |
         black --check --diff .
     
-    - name: Run tests
+    - name: Run basic tests
       run: |
+        # Set PYTHONPATH to include the project root
+        export PYTHONPATH="${PYTHONPATH}:$(pwd)"
+        python -m pytest tests/test_basic.py -v
+    
+    - name: Run all tests
+      run: |
+        # Set PYTHONPATH to include the project root
+        export PYTHONPATH="${PYTHONPATH}:$(pwd)"
         python -m pytest tests/ -v --cov=. --cov-report=xml --cov-report=html
+      env:
+        # Set dummy environment variables for tests that might need them
+        GOOGLE_API_KEY: "dummy_key_for_testing"
+        LLM_PROVIDER: "gemini"
     
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
