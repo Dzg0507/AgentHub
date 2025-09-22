@@ -32,7 +32,6 @@ Agent_Control_Hub/
 │       ├── files.py
 │       ├── prompts.py
 │       ├── server_manager.py
-│       ├── complex_idea_generator.py
 │       └── simple_idea_generator.py
 ├── ui/                           # User interface
 │   ├── streamlit/               # Streamlit app
@@ -84,7 +83,6 @@ Agent_Control_Hub/
 ├── PROJECT_STRUCTURE.md
 ├── requirements.txt
 ├── setup.py
-├── tools.py
 └── .gitignore
 ```
 
