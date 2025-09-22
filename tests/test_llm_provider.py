@@ -118,11 +118,11 @@ class TestLLMProvider(unittest.TestCase):
 
     def test_factory_function(self):
         """Test factory function for creating providers"""
-        provider = create_src.llm.llm_provider(provider="together")
+        provider = create_llm_provider(provider="together")
         self.assertIsInstance(provider, LLMProvider)
         self.assertEqual(provider.provider, "together")
 
-    @patch("src.llm.llm_provider.create_src.llm.llm_provider")
+    @patch("src.llm.llm_provider.create_llm_provider")
     def test_get_llm_response(self, mock_create):
         """Test get_llm_response convenience function"""
         # Mock provider

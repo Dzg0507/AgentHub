@@ -132,24 +132,29 @@ def test_file_plan_item():
 def test_validate_fileplan_and_outputs():
     """Test file plan validation"""
 
-    # Test valid plan
-    valid_plan = [
-        FilePlanItem("test.py", "print('hello')", []),
-        FilePlanItem("README.md", "# Test", []),
-    ]
+    with tempfile.TemporaryDirectory() as temp_dir:
+        sandbox_dir = Path(temp_dir)
+        
+        # Create test files
+        (sandbox_dir / "test.py").write_text("print('hello')")
+        (sandbox_dir / "README.md").write_text("# Test")
 
-    valid_outputs = ["test.py", "README.md"]
+        # Test valid plan
+        valid_plan = [
+            FilePlanItem("test.py", "print('hello')", []),
+            FilePlanItem("README.md", "# Test", []),
+        ]
 
-    result = validate_fileplan_and_outputs(valid_plan, valid_outputs)
-    assert result["valid"] is True
-    assert result["missing_files"] == []
+        result = validate_fileplan_and_outputs(valid_plan, sandbox_dir)
+        assert result["valid"] is True
+        assert result["missing_files"] == []
 
-    # Test plan with missing files
-    missing_outputs = ["test.py"]  # Missing README.md
+        # Test plan with missing files
+        (sandbox_dir / "test.py").unlink()  # Remove test.py
 
-    result = validate_fileplan_and_outputs(valid_plan, missing_outputs)
-    assert result["valid"] is False
-    assert "README.md" in result["missing_files"]
+        result = validate_fileplan_and_outputs(valid_plan, sandbox_dir)
+        assert result["valid"] is False
+        assert "test.py" in result["missing_files"]
 
 
 if __name__ == "__main__":
