@@ -27,6 +27,9 @@ WORKSPACE_DIR = Path("workspace")
 TEMP_TTL_MINUTES = 60
 
 # Configure logging
+# Ensure logs directory exists
+os.makedirs("logs", exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
