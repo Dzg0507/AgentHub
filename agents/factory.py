@@ -14,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Load environment variables
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Simplified agent implementation with LLM abstraction
@@ -23,6 +24,7 @@ from typing import Dict, Any, List
 # Import the LLM provider abstraction
 from src.llm.llm_provider import get_llm_response, get_default_llm
 
+
 # Simple agent class for basic functionality
 class SimpleAgent:
     def __init__(self, name: str, system_message: str, llm_provider: str = None):
@@ -30,35 +32,33 @@ class SimpleAgent:
         self.system_message = system_message
         self.llm_provider = llm_provider
         self._llm = None
-    
+
     def _get_llm(self):
         """Get LLM instance, creating if needed"""
         if self._llm is None:
             if self.llm_provider:
                 from src.llm.llm_provider import create_llm_provider
+
                 self._llm = create_llm_provider(provider=self.llm_provider)
             else:
                 self._llm = get_default_llm()
         return self._llm
-    
+
     def generate_reply(self, messages: List[Dict[str, str]]) -> Dict[str, str]:
         """Generate a reply using the configured LLM provider"""
         try:
             # Prepare messages with system prompt
-            full_messages = [{"role": "system", "content": self.system_message}] + messages
-            
+            full_messages = [
+                {"role": "system", "content": self.system_message}
+            ] + messages
+
             # Get response from LLM
             response_content = self._get_llm().chat(full_messages)
-            
-            return {
-                "content": response_content,
-                "role": "assistant"
-            }
+
+            return {"content": response_content, "role": "assistant"}
         except Exception as e:
-            return {
-                "content": f"Error generating response: {e}",
-                "role": "assistant"
-            }
+            return {"content": f"Error generating response: {e}", "role": "assistant"}
+
 
 def create_agents() -> Dict[str, Any]:
     """Create all the specialized agents for the hub"""
@@ -94,7 +94,7 @@ Enhanced: "Create a full-stack web application with the following specifications
 - Security: Input validation, SQL injection prevention, CORS configuration
 - Performance: Caching, database indexing, lazy loading
 - Documentation: API documentation, setup instructions, user guide"
-"""
+""",
     )
 
     # File Planning Agent - Creates structured file plans
@@ -139,7 +139,7 @@ EXAMPLE FORMAT:
   ]
 }
 
-Focus on creating a complete, runnable project structure."""
+Focus on creating a complete, runnable project structure.""",
     )
 
     # Code Generation Agent - Creates the actual implementation
@@ -492,7 +492,7 @@ The application uses SQLite for development. The database will be created automa
 print('FILE_CREATED:' + readme_file)
 ```
 
-Focus on creating COMPREHENSIVE, FULL-FEATURED code implementations with substantial functionality."""
+Focus on creating COMPREHENSIVE, FULL-FEATURED code implementations with substantial functionality.""",
     )
 
     # Code Reviewer Agent - Reviews and improves generated code
@@ -523,7 +523,7 @@ OUTPUT FORMAT:
 - Recommend additional features or optimizations
 - Rate the overall code quality (1-10)
 
-Focus on ensuring production-ready, maintainable code."""
+Focus on ensuring production-ready, maintainable code.""",
     )
 
     # Testing Agent - Creates and runs tests
@@ -553,7 +553,7 @@ OUTPUT FORMAT:
 - Document test cases and expected outcomes
 - Ensure tests are runnable and maintainable
 
-Focus on creating a comprehensive test suite that validates all functionality."""
+Focus on creating a comprehensive test suite that validates all functionality.""",
     )
 
     # Deployment Agent - Handles packaging and deployment
@@ -583,7 +583,7 @@ OUTPUT FORMAT:
 - Add monitoring and logging configuration
 - Document deployment procedures and troubleshooting
 
-Focus on creating a complete deployment solution."""
+Focus on creating a complete deployment solution.""",
     )
 
     return {

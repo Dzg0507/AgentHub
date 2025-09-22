@@ -12,11 +12,12 @@ from pathlib import Path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
+
 def main():
     """Quick launcher for Agent Control Hub"""
     print("🤖 Agent Control Hub - Quick Launcher")
     print("=" * 40)
-    
+
     if len(sys.argv) < 2:
         print("Usage: python run.py <command>")
         print()
@@ -27,9 +28,9 @@ def main():
         print("  test      - Run tests")
         print("  help      - Show this help")
         return
-    
+
     command = sys.argv[1].lower()
-    
+
     if command == "ui":
         print("🎨 Starting Streamlit UI...")
         os.system("python scripts/start_hub.py --streamlit-only")
@@ -52,6 +53,7 @@ def main():
     else:
         print(f"Unknown command: {command}")
         print("Run 'python run.py help' for available commands")
+
 
 if __name__ == "__main__":
     main()

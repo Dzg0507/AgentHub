@@ -17,14 +17,20 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class LLMProvider:
     """Unified LLM provider that supports multiple backends"""
-    
-    def __init__(self, provider: Optional[str] = None, api_key: Optional[str] = None, 
-                 base_url: Optional[str] = None, model: Optional[str] = None):
+
+    def __init__(
+        self,
+        provider: Optional[str] = None,
+        api_key: Optional[str] = None,
+        base_url: Optional[str] = None,
+        model: Optional[str] = None,
+    ):
         """
         Initialize LLM provider with configuration
-        
+
         Args:
             provider: LLM provider name (together, openrouter, local, gemini)
             api_key: API key for the provider
@@ -32,7 +38,7 @@ class LLMProvider:
             model: Model name to use
         """
         self.provider = provider or os.getenv("LLM_PROVIDER", "gemini")
-        
+
         # Get API key based on provider
         if api_key:
             self.api_key = api_key
@@ -45,10 +51,10 @@ class LLMProvider:
                 self.api_key = os.getenv("OPENROUTER_API_KEY")
             else:
                 self.api_key = os.getenv("LLM_API_KEY")
-        
+
         self.base_url = base_url or os.getenv("LLM_API_BASE")
         self.model = model or os.getenv("LLM_MODEL", "gemini-1.5-flash")
-        
+
         # Set default URLs based on provider
         if not self.base_url:
             if self.provider == "together":
@@ -57,25 +63,31 @@ class LLMProvider:
                 self.base_url = "https://openrouter.ai/api/v1/chat/completions"
             elif self.provider == "local":
                 self.base_url = "http://localhost:11434/v1/chat/completions"
-        
-        logger.info(f"Initialized LLM provider: {self.provider} with model: {self.model}")
 
-    def chat(self, messages: List[Dict[str, str]], temperature: float = 0.2, 
-             max_tokens: int = 2048) -> str:
+        logger.info(
+            f"Initialized LLM provider: {self.provider} with model: {self.model}"
+        )
+
+    def chat(
+        self,
+        messages: List[Dict[str, str]],
+        temperature: float = 0.2,
+        max_tokens: int = 2048,
+    ) -> str:
         """
         Generate a chat completion using the configured provider
-        
+
         Args:
             messages: List of message dictionaries with 'role' and 'content'
             temperature: Sampling temperature (0.0 to 1.0)
             max_tokens: Maximum tokens to generate
-            
+
         Returns:
             Generated response content as string
         """
         try:
             logger.info(f"LLM request to {self.provider}: {len(messages)} messages")
-            
+
             if self.provider == "gemini":
                 return self._chat_gemini(messages, temperature, max_tokens)
             elif self.provider == "together":
@@ -86,43 +98,47 @@ class LLMProvider:
                 return self._chat_local(messages, temperature, max_tokens)
             else:
                 raise ValueError(f"Unknown provider: {self.provider}")
-                
+
         except Exception as e:
             logger.error(f"LLM request failed: {e}")
             raise
 
-    def _chat_gemini(self, messages: List[Dict[str, str]], temperature: float, max_tokens: int) -> str:
+    def _chat_gemini(
+        self, messages: List[Dict[str, str]], temperature: float, max_tokens: int
+    ) -> str:
         """Generate response using Google Gemini API"""
         try:
             import google.generativeai as genai
-            
+
             # Configure the API
             genai.configure(api_key=self.api_key)
             model = genai.GenerativeModel(self.model)
-            
+
             # Prepare the conversation
             conversation = []
             for msg in messages:
-                if msg['role'] == 'system':
+                if msg["role"] == "system":
                     conversation.append(f"System: {msg['content']}")
-                elif msg['role'] == 'user':
+                elif msg["role"] == "user":
                     conversation.append(f"User: {msg['content']}")
-                elif msg['role'] == 'assistant':
+                elif msg["role"] == "assistant":
                     conversation.append(f"Assistant: {msg['content']}")
-            
+
             prompt = "\n".join(conversation)
-            
+
             # Generate response
             response = model.generate_content(prompt)
-            
+
             logger.info(f"Gemini response generated successfully")
             return response.text
-            
+
         except Exception as e:
             logger.error(f"Gemini API error: {e}")
             raise
 
-    def _chat_together(self, messages: List[Dict[str, str]], temperature: float, max_tokens: int) -> str:
+    def _chat_together(
+        self, messages: List[Dict[str, str]], temperature: float, max_tokens: int
+    ) -> str:
         """Generate response using Together.ai API"""
         url = self.base_url
         headers = {"Authorization": f"Bearer {self.api_key}"}
@@ -132,15 +148,17 @@ class LLMProvider:
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
-        
+
         response = requests.post(url, json=payload, headers=headers, timeout=60)
         response.raise_for_status()
-        
+
         result = response.json()
         logger.info(f"Together.ai response generated successfully")
         return result["choices"][0]["message"]["content"]
 
-    def _chat_openrouter(self, messages: List[Dict[str, str]], temperature: float, max_tokens: int) -> str:
+    def _chat_openrouter(
+        self, messages: List[Dict[str, str]], temperature: float, max_tokens: int
+    ) -> str:
         """Generate response using OpenRouter API"""
         url = self.base_url
         headers = {"Authorization": f"Bearer {self.api_key}"}
@@ -150,15 +168,17 @@ class LLMProvider:
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
-        
+
         response = requests.post(url, json=payload, headers=headers, timeout=60)
         response.raise_for_status()
-        
+
         result = response.json()
         logger.info(f"OpenRouter response generated successfully")
         return result["choices"][0]["message"]["content"]
 
-    def _chat_local(self, messages: List[Dict[str, str]], temperature: float, max_tokens: int) -> str:
+    def _chat_local(
+        self, messages: List[Dict[str, str]], temperature: float, max_tokens: int
+    ) -> str:
         """Generate response using local LLM (e.g., Ollama, LM Studio)"""
         url = self.base_url
         headers = {"Authorization": f"Bearer {self.api_key}"} if self.api_key else {}
@@ -168,10 +188,10 @@ class LLMProvider:
             "temperature": temperature,
             "max_tokens": max_tokens,
         }
-        
+
         response = requests.post(url, json=payload, headers=headers, timeout=60)
         response.raise_for_status()
-        
+
         result = response.json()
         logger.info(f"Local LLM response generated successfully")
         return result["choices"][0]["message"]["content"]
@@ -185,14 +205,14 @@ class LLMProvider:
                 "togethercomputer/CodeLlama-34b-Instruct",
                 "togethercomputer/CodeLlama-13b-Instruct",
                 "meta-llama/Llama-2-70b-chat-hf",
-                "mistralai/Mistral-7B-Instruct-v0.1"
+                "mistralai/Mistral-7B-Instruct-v0.1",
             ]
         elif self.provider == "openrouter":
             return [
                 "openrouter/mistral-7b",
                 "openrouter/llama-2-7b",
                 "openrouter/codellama-7b",
-                "anthropic/claude-3-haiku"
+                "anthropic/claude-3-haiku",
             ]
         elif self.provider == "local":
             return ["llama2", "codellama", "mistral", "custom"]
@@ -216,23 +236,27 @@ def create_llm_provider(provider: Optional[str] = None, **kwargs) -> LLMProvider
     return LLMProvider(provider=provider, **kwargs)
 
 
-def get_llm_response(messages: List[Dict[str, str]], temperature: float = 0.2, 
-                    max_tokens: int = 2048, provider: Optional[str] = None) -> str:
+def get_llm_response(
+    messages: List[Dict[str, str]],
+    temperature: float = 0.2,
+    max_tokens: int = 2048,
+    provider: Optional[str] = None,
+) -> str:
     """
     Convenience function to get LLM response with intelligent fallback logic
-    
+
     Args:
         messages: List of message dictionaries
         temperature: Sampling temperature
         max_tokens: Maximum tokens to generate
         provider: Optional provider override
-        
+
     Returns:
         Generated response content
     """
     # Define fallback chain based on provider
     fallback_chain = []
-    
+
     if provider == "gemini":
         fallback_chain = ["gemini", "together", "openrouter", "local"]
     elif provider == "together":
@@ -244,12 +268,14 @@ def get_llm_response(messages: List[Dict[str, str]], temperature: float = 0.2,
     else:
         # Default fallback chain
         fallback_chain = ["gemini", "together", "openrouter", "local"]
-    
+
     last_error = None
-    
+
     for i, fallback_provider in enumerate(fallback_chain):
         try:
-            logger.info(f"Attempting LLM request with {fallback_provider} (attempt {i+1}/{len(fallback_chain)})")
+            logger.info(
+                f"Attempting LLM request with {fallback_provider} (attempt {i+1}/{len(fallback_chain)})"
+            )
             llm = create_llm_provider(provider=fallback_provider)
             response = llm.chat(messages, temperature, max_tokens)
             logger.info(f"Successfully got response from {fallback_provider}")
@@ -258,23 +284,27 @@ def get_llm_response(messages: List[Dict[str, str]], temperature: float = 0.2,
             logger.warning(f"Provider {fallback_provider} failed: {e}")
             last_error = e
             continue
-    
+
     # If all providers failed
     logger.error("All LLM providers failed")
     raise last_error or Exception("All LLM providers failed")
 
 
-def get_hybrid_llm_response(messages: List[Dict[str, str]], temperature: float = 0.2, 
-                           max_tokens: int = 2048, prefer_local: bool = True) -> str:
+def get_hybrid_llm_response(
+    messages: List[Dict[str, str]],
+    temperature: float = 0.2,
+    max_tokens: int = 2048,
+    prefer_local: bool = True,
+) -> str:
     """
     Get LLM response with hybrid local/cloud logic
-    
+
     Args:
         messages: List of message dictionaries
         temperature: Sampling temperature
         max_tokens: Maximum tokens to generate
         prefer_local: Whether to prefer local LLM first
-        
+
     Returns:
         Generated response content
     """
@@ -284,12 +314,13 @@ def get_hybrid_llm_response(messages: List[Dict[str, str]], temperature: float =
     else:
         # Try cloud first, then local
         fallback_chain = ["gemini", "together", "openrouter", "local"]
-    
+
     return get_llm_response(messages, temperature, max_tokens, fallback_chain[0])
 
 
 # Global instance for backward compatibility
 _default_llm = None
+
 
 def get_default_llm() -> LLMProvider:
     """Get the default LLM provider instance"""

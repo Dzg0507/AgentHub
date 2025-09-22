@@ -1,7 +1,7 @@
 # tools.py
 import json
 from pathlib import Path
-   
+
 
 def read_file(file_path: str) -> str:
     """
@@ -10,6 +10,8 @@ def read_file(file_path: str) -> str:
     """
     with open(file_path, "r", encoding="utf-8") as f:
         return f.read()
+
+
 def append_to_file(file_path: str, content: str) -> str:
     """
     Append *content* to *file_path*.
@@ -22,5 +24,5 @@ def append_to_file(file_path: str, content: str) -> str:
     if not content or not str(content).strip():
         raise ValueError("Attempted to write empty content to file.")
     with open(file_path, "a", encoding="utf-8") as f:
-        f.write(content)          # No extra newline – the generated code already ends with one
+        f.write(content)  # No extra newline – the generated code already ends with one
     return f"✅ Wrote {len(content)} characters to {file_path}"

@@ -15,5 +15,3 @@ def read_local_text(rel_path: str) -> str | None:
 def load_prompt(rel_path: str, default_text: str) -> str:
     txt = read_local_text(rel_path)
     return txt if (txt and txt.strip()) else default_text
-
-

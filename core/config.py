@@ -42,14 +42,43 @@ LLM_CONFIG = [
 # Project settings
 DEFAULT_LANGUAGE = "python"
 DEFAULT_GUIDANCE = "standard"
-SUPPORTED_LANGUAGES = ["python", "node", "javascript", "react-ts", "react", "threejs", "go", "rust", "java"]
+SUPPORTED_LANGUAGES = [
+    "python",
+    "node",
+    "javascript",
+    "react-ts",
+    "react",
+    "threejs",
+    "go",
+    "rust",
+    "java",
+]
 GUIDANCE_LEVELS = ["minimal", "standard", "explicit"]
 
 # File patterns
 BANNED_IMPORT_TOKENS = [
-    "pygame", "flask", "fastapi", "requests", "numpy", "pandas", "scipy", "torch",
-    "tensorflow", "sqlalchemy", "psycopg2", "matplotlib", "seaborn", "opencv", "cv2",
-    "PIL", "pillow", "django", "boto3", "sklearn", "airflow", "pydantic",
+    "pygame",
+    "flask",
+    "fastapi",
+    "requests",
+    "numpy",
+    "pandas",
+    "scipy",
+    "torch",
+    "tensorflow",
+    "sqlalchemy",
+    "psycopg2",
+    "matplotlib",
+    "seaborn",
+    "opencv",
+    "cv2",
+    "PIL",
+    "pillow",
+    "django",
+    "boto3",
+    "sklearn",
+    "airflow",
+    "pydantic",
 ]
 
 # Pipeline settings
@@ -58,7 +87,7 @@ PIPELINE_STEPS = [
     ("Code Generation", "generate_code"),
     ("Code Execution", "execute_code"),
     ("Testing", "run_tests"),
-    ("Deployment", "deploy_code")
+    ("Deployment", "deploy_code"),
 ]
 
 # Timeout settings

@@ -21,7 +21,13 @@ from services.pipeline import periodic_cleanup_task
 from services import pipeline
 
 # Import configuration
-from core.config import SERVER_HOST, SERVER_PORT, WORKSPACE_DIR, PROJECTS_DIR, DEPLOY_DIR
+from core.config import (
+    SERVER_HOST,
+    SERVER_PORT,
+    WORKSPACE_DIR,
+    PROJECTS_DIR,
+    DEPLOY_DIR,
+)
 
 # Connect the projects store between modules
 pipeline.projects = projects
@@ -33,6 +39,7 @@ for directory in [WORKSPACE_DIR, PROJECTS_DIR, DEPLOY_DIR]:
 # Start background cleanup task using lifespan
 from contextlib import asynccontextmanager
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage application lifespan events"""
@@ -42,13 +49,14 @@ async def lifespan(app: FastAPI):
     # Shutdown (if needed)
     pass
 
+
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application"""
     app = FastAPI(
         title="Advanced Agent Hub",
         description="A centralized hub for multi-agent code creation, enhancement, and deployment",
         version="1.0.0",
-        lifespan=lifespan
+        lifespan=lifespan,
     )
 
     # Add CORS middleware
@@ -72,7 +80,7 @@ def create_app() -> FastAPI:
             "version": "1.0.0",
             "status": "running",
             "docs_url": "/docs",
-            "projects_endpoint": "/projects"
+            "projects_endpoint": "/projects",
         }
 
     # Health check endpoint
@@ -84,7 +92,7 @@ def create_app() -> FastAPI:
             "active_projects": len(projects),
             "workspace": str(WORKSPACE_DIR),
             "projects_dir": str(PROJECTS_DIR),
-            "deploy_dir": str(DEPLOY_DIR)
+            "deploy_dir": str(DEPLOY_DIR),
         }
 
     # HTML Interface
@@ -92,13 +100,16 @@ def create_app() -> FastAPI:
     async def get_ui():
         """Serve the HTML interface"""
         from utils.prompts import load_template
+
         return load_template("ui.html")
 
     return app
+
 
 app = create_app()
 
 if __name__ == "__main__":
     import uvicorn
+
     print(f"Starting Agent Hub Server on {SERVER_HOST}:{SERVER_PORT}")
     uvicorn.run(app, host=SERVER_HOST, port=SERVER_PORT, log_level="info")

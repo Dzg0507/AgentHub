@@ -20,13 +20,18 @@ from fastapi.responses import FileResponse
 # Add project root to Python path for imports
 import sys
 from pathlib import Path
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Import project dependencies
 from services.plan import AgentProject, ProjectStatus
 from utils.env import ensure_python_venv, run_command
 from utils.files import run_python_snippet_in_dir, extract_python_code_block
-from services.pipeline import process_project_full_pipeline, cleanup_old_projects, _force_minimal_scaffold
+from services.pipeline import (
+    process_project_full_pipeline,
+    cleanup_old_projects,
+    _force_minimal_scaffold,
+)
 
 # Configuration
 PROJECTS_DIR = Path("agent_workspace/projects")
@@ -37,6 +42,7 @@ projects: Dict[str, AgentProject] = {}
 
 # Create router
 projects_router = APIRouter()
+
 
 @projects_router.post("/projects")
 async def create_project(request: dict):
@@ -65,8 +71,9 @@ async def create_project(request: dict):
     return {
         "project_id": project_id,
         "status": "processing",
-        "message": "Project created and processing started"
+        "message": "Project created and processing started",
     }
+
 
 @projects_router.get("/projects/{project_id}")
 async def get_project(project_id: str):
@@ -77,13 +84,15 @@ async def get_project(project_id: str):
     project = projects[project_id]
     return project.to_dict()
 
+
 @projects_router.get("/projects")
 async def list_projects():
     """List all projects with their status"""
     return {
         "projects": [project.to_dict() for project in projects.values()],
-        "total_count": len(projects)
+        "total_count": len(projects),
     }
+
 
 @projects_router.delete("/projects/{project_id}")
 async def delete_project(project_id: str):
@@ -99,6 +108,7 @@ async def delete_project(project_id: str):
     del projects[project_id]
 
     return {"message": "Project deleted successfully"}
+
 
 @projects_router.get("/projects/{project_id}/download")
 async def download_project(project_id: str):
@@ -120,7 +130,7 @@ async def download_project(project_id: str):
     # Create ZIP file on disk for stable download
     zip_path = project_dir / f"{project_id}.zip"
     try:
-        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
             for file_path in files:
                 if file_path.is_file():
                     arcname = file_path.relative_to(project_dir)
@@ -129,7 +139,11 @@ async def download_project(project_id: str):
         raise HTTPException(status_code=500, detail=f"Zipping failed: {e}")
 
     # Create a meaningful filename
-    project_name = project.enhanced_prompt.lower().replace(" ", "_")[:50] if project.enhanced_prompt else project_id
+    project_name = (
+        project.enhanced_prompt.lower().replace(" ", "_")[:50]
+        if project.enhanced_prompt
+        else project_id
+    )
     filename = f"{project_name}_project.zip"
 
     return FileResponse(
@@ -137,6 +151,7 @@ async def download_project(project_id: str):
         media_type="application/zip",
         filename=filename,
     )
+
 
 @projects_router.get("/projects/{project_id}/files")
 async def list_project_files(project_id: str):
@@ -155,29 +170,32 @@ async def list_project_files(project_id: str):
     for file_path in project_dir.rglob("*"):
         if file_path.is_file():
             size = file_path.stat().st_size
-            files.append({
-                "name": file_path.name,
-                "path": str(file_path.relative_to(WORKSPACE_DIR)),
-                "size": size,
-                "modified": file_path.stat().st_mtime
-            })
+            files.append(
+                {
+                    "name": file_path.name,
+                    "path": str(file_path.relative_to(WORKSPACE_DIR)),
+                    "size": size,
+                    "modified": file_path.stat().st_mtime,
+                }
+            )
             total_size += size
 
     return {
         "files": sorted(files, key=lambda x: x["name"]),
         "total_files": len(files),
-        "total_size": total_size
+        "total_size": total_size,
     }
+
 
 @projects_router.get("/projects/{project_id}/logs")
 async def get_project_logs(project_id: str):
     """Return execution logs for a project"""
     if project_id not in projects:
         raise HTTPException(status_code=404, detail="Project not found")
-    
+
     project = projects[project_id]
     project_dir = PROJECTS_DIR / project_id
-    
+
     # Try to read from execution.log file first
     log_file = project_dir / "execution.log"
     file_logs = []
@@ -187,16 +205,18 @@ async def get_project_logs(project_id: str):
                 file_logs = [line.strip() for line in f.readlines() if line.strip()]
         except Exception:
             pass
-    
+
     # Combine file logs with in-memory logs
     all_logs = file_logs + project.execution_log
-    
+
     return {"execution_log": all_logs}
+
 
 @projects_router.post("/projects/{project_id}/retry")
 async def retry_project(project_id: str):
     """Retry the pipeline from Code Generation onward. If last status was GENERATING failure,
-    re-run generation; otherwise continue from the next failed stage. Returns new status."""
+    re-run generation; otherwise continue from the next failed stage. Returns new status.
+    """
     if project_id not in projects:
         raise HTTPException(status_code=404, detail="Project not found")
     agent = projects[project_id]
@@ -209,6 +229,7 @@ async def retry_project(project_id: str):
         return {"message": "Retry started", "status": agent.status}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Retry failed: {e}")
+
 
 @projects_router.post("/projects/{project_id}/force-scaffold")
 async def force_scaffold(project_id: str):
@@ -226,6 +247,7 @@ async def force_scaffold(project_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Scaffold failed: {e}")
 
+
 @projects_router.post("/projects/{project_id}/venv")
 async def create_project_venv(project_id: str):
     """Create per-project venv and install requirements if present."""
@@ -235,6 +257,7 @@ async def create_project_venv(project_id: str):
     project_dir.mkdir(parents=True, exist_ok=True)
     info = ensure_python_venv(project_dir)
     return {"ok": True, **info}
+
 
 @projects_router.post("/projects/{project_id}/setup")
 async def setup_project(project_id: str):
@@ -246,8 +269,17 @@ async def setup_project(project_id: str):
     project_dir.mkdir(parents=True, exist_ok=True)
     lang = getattr(agent, "language", "python").lower()
     logs: list[dict] = []
+
     def log_step(name: str, result: dict):
-        logs.append({"step": name, "returncode": result.get("returncode"), "stdout": result.get("stdout"), "stderr": result.get("stderr")})
+        logs.append(
+            {
+                "step": name,
+                "returncode": result.get("returncode"),
+                "stdout": result.get("stdout"),
+                "stderr": result.get("stderr"),
+            }
+        )
+
     if lang == "python":
         info = ensure_python_venv(project_dir)
         logs.append({"step": "venv", **info})
@@ -266,5 +298,12 @@ async def setup_project(project_id: str):
         result = run_command(["gradle", "build"], cwd=project_dir, timeout_sec=900)
         log_step("gradle build", result)
     else:
-        logs.append({"step": "noop", "returncode": 0, "stdout": "No setup for language", "stderr": ""})
+        logs.append(
+            {
+                "step": "noop",
+                "returncode": 0,
+                "stdout": "No setup for language",
+                "stderr": "",
+            }
+        )
     return {"ok": True, "logs": logs}

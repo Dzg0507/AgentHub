@@ -25,6 +25,7 @@ SERVER_PORT = 8000
 
 if __name__ == "__main__":
     import uvicorn
+
     print(f"Starting Agent Hub Server on {SERVER_HOST}:{SERVER_PORT}")
     print("Using new modular structure")
     uvicorn.run(app, host=SERVER_HOST, port=SERVER_PORT, log_level="info")

@@ -35,6 +35,7 @@ def ensure_python_venv(project_dir: Path) -> Dict[str, Any]:
     try:
         if not venv_dir.exists():
             import venv as _venv
+
             builder = _venv.EnvBuilder(with_pip=True, clear=False)
             builder.create(str(venv_dir))
             info["created"] = True
@@ -50,7 +51,14 @@ def ensure_python_venv(project_dir: Path) -> Dict[str, Any]:
         req = project_dir / "requirements.txt"
         if req.exists():
             proc = subprocess.Popen(
-                [pip_exec, "install", "--disable-pip-version-check", "--no-input", "-r", str(req)],
+                [
+                    pip_exec,
+                    "install",
+                    "--disable-pip-version-check",
+                    "--no-input",
+                    "-r",
+                    str(req),
+                ],
                 cwd=str(project_dir),
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
@@ -61,11 +69,13 @@ def ensure_python_venv(project_dir: Path) -> Dict[str, Any]:
             except subprocess.TimeoutExpired:
                 proc.kill()
                 out, err = proc.communicate()
-                info["pip_stderr"] = (info.get("pip_stderr", "") + "\nTimeout after 300s").strip()
+                info["pip_stderr"] = (
+                    info.get("pip_stderr", "") + "\nTimeout after 300s"
+                ).strip()
             info["pip_stdout"] = out or ""
-            info["pip_stderr"] = (info.get("pip_stderr", "") + "\n" + (err or "")).strip()
+            info["pip_stderr"] = (
+                info.get("pip_stderr", "") + "\n" + (err or "")
+            ).strip()
     except Exception as e:
         info["error"] = str(e)
     return info
-
-

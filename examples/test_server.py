@@ -10,10 +10,11 @@ import sys
 import signal
 import os
 
+
 def test_server_startup():
     """Test if the server can start successfully"""
     print("🧪 Testing server startup...")
-    
+
     # Try to start the server
     try:
         # Try the new modular version first
@@ -21,19 +22,16 @@ def test_server_startup():
             cmd = [sys.executable, "server/app.py"]
         else:
             cmd = [sys.executable, "agent_hub_server.py"]
-        
+
         print(f"Starting server with: {' '.join(cmd)}")
-        
+
         process = subprocess.Popen(
-            cmd,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
         )
-        
+
         # Wait a bit for server to start
         time.sleep(5)
-        
+
         # Check if process is still running
         if process.poll() is not None:
             stdout, stderr = process.communicate()
@@ -41,9 +39,9 @@ def test_server_startup():
             print(f"STDOUT: {stdout}")
             print(f"STDERR: {stderr}")
             return False
-        
+
         print("✅ Server process is running")
-        
+
         # Try to connect to the server
         try:
             response = requests.get("http://127.0.0.1:8000/health", timeout=5)
@@ -55,16 +53,17 @@ def test_server_startup():
                 print(f"⚠️ Server responded with status code: {response.status_code}")
         except requests.exceptions.RequestException as e:
             print(f"❌ Could not connect to server: {e}")
-        
+
         # Clean up
         process.terminate()
         process.wait()
         print("✅ Server stopped cleanly")
         return True
-        
+
     except Exception as e:
         print(f"❌ Error testing server: {e}")
         return False
+
 
 if __name__ == "__main__":
     test_server_startup()

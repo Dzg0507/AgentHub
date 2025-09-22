@@ -7,6 +7,7 @@ import re
 
 class ProjectStatus:
     """Project status constants"""
+
     PENDING = "pending"
     ENHANCING = "enhancing"
     GENERATING = "generating"
@@ -21,6 +22,7 @@ class ProjectStatus:
 @dataclass
 class AgentProject:
     """Agent project data model"""
+
     project_id: str
     prompt: str
     enhanced_prompt: str = ""
@@ -31,7 +33,7 @@ class AgentProject:
     execution_log: List[str] = None
     created_at: datetime = None
     updated_at: datetime = None
-    
+
     def __post_init__(self):
         if self.files_created is None:
             self.files_created = []
@@ -41,7 +43,7 @@ class AgentProject:
             self.created_at = datetime.now()
         if self.updated_at is None:
             self.updated_at = datetime.now()
-    
+
     def to_dict(self) -> Dict:
         """Convert project to dictionary"""
         return {
@@ -63,13 +65,15 @@ class FilePlanItem:
     name: str
     content: str
     dependencies: List[str] = None
-    
+
     def __post_init__(self):
         if self.dependencies is None:
             self.dependencies = []
 
 
-def validate_fileplan_and_outputs(plan: List[FilePlanItem], sandbox_dir: Path) -> Dict[str, list]:
+def validate_fileplan_and_outputs(
+    plan: List[FilePlanItem], sandbox_dir: Path
+) -> Dict[str, list]:
     seen = set()
     duplicates = []
     invalid = []
@@ -81,7 +85,7 @@ def validate_fileplan_and_outputs(plan: List[FilePlanItem], sandbox_dir: Path) -
         seen.add(rel)
         if rel == "" or rel.startswith(".."):
             invalid.append(rel)
-        p = (sandbox_dir / rel)
+        p = sandbox_dir / rel
         if not p.exists():
             missing.append(rel)
     missing_imports = []
@@ -90,7 +94,11 @@ def validate_fileplan_and_outputs(plan: List[FilePlanItem], sandbox_dir: Path) -
             txt = py.read_text(encoding="utf-8", errors="ignore")
         except Exception:
             continue
-        for m in re.findall(r"^\s*from\s+([\w_]+)\s+import|^\s*import\s+([\w_]+)", txt, flags=re.MULTILINE):
+        for m in re.findall(
+            r"^\s*from\s+([\w_]+)\s+import|^\s*import\s+([\w_]+)",
+            txt,
+            flags=re.MULTILINE,
+        ):
             mod = (m[0] or m[1]).strip()
             if not mod:
                 continue
@@ -104,5 +112,3 @@ def validate_fileplan_and_outputs(plan: List[FilePlanItem], sandbox_dir: Path) -
         "missing_files": sorted(set(missing)),
         "missing_imports": sorted(set(missing_imports)),
     }
-
-
