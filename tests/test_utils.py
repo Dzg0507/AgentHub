@@ -91,12 +91,12 @@ def test_run_command():
     """Test command execution"""
 
     # Test simple command
-    result = run_command(["echo", "hello"], timeout_sec=10)
+    result = run_command(["echo", "hello"], cwd=Path.cwd(), timeout_sec=10)
     assert result["returncode"] == 0
     assert "hello" in result["stdout"]
 
     # Test command that fails
-    result = run_command(["python", "-c", "exit(1)"], timeout_sec=10)
+    result = run_command(["python", "-c", "exit(1)"], cwd=Path.cwd(), timeout_sec=10)
     assert result["returncode"] == 1
 
 
@@ -109,12 +109,11 @@ def test_ensure_python_venv():
         # Create venv
         info = ensure_python_venv(project_dir)
 
-        assert info["ok"] is True
-        assert "venv_path" in info
-        assert "python_path" in info
+        assert info["created"] is True
+        assert "python" in info
 
         # Verify venv directory exists
-        venv_dir = Path(info["venv_path"])
+        venv_dir = project_dir / ".venv"
         assert venv_dir.exists()
 
 

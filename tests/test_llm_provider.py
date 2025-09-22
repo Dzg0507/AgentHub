@@ -58,7 +58,7 @@ class TestLLMProvider(unittest.TestCase):
         models = provider.get_available_models()
         self.assertIn("llama2", models)
 
-    @patch("llm_provider.requests.post")
+    @patch("src.llm.llm_provider.requests.post")
     def test_together_api_call(self, mock_post):
         """Test Together.ai API call"""
         # Mock successful response
@@ -75,7 +75,7 @@ class TestLLMProvider(unittest.TestCase):
         self.assertEqual(response, "Hello from Together!")
         mock_post.assert_called_once()
 
-    @patch("llm_provider.requests.post")
+    @patch("src.llm.llm_provider.requests.post")
     def test_openrouter_api_call(self, mock_post):
         """Test OpenRouter API call"""
         # Mock successful response
@@ -92,7 +92,7 @@ class TestLLMProvider(unittest.TestCase):
         self.assertEqual(response, "Hello from OpenRouter!")
         mock_post.assert_called_once()
 
-    @patch("llm_provider.requests.post")
+    @patch("src.llm.llm_provider.requests.post")
     def test_local_api_call(self, mock_post):
         """Test local LLM API call"""
         # Mock successful response
@@ -118,11 +118,11 @@ class TestLLMProvider(unittest.TestCase):
 
     def test_factory_function(self):
         """Test factory function for creating providers"""
-        provider = create_llm_provider(provider="together")
+        provider = create_src.llm.llm_provider(provider="together")
         self.assertIsInstance(provider, LLMProvider)
         self.assertEqual(provider.provider, "together")
 
-    @patch("llm_provider.create_llm_provider")
+    @patch("src.llm.llm_provider.create_src.llm.llm_provider")
     def test_get_llm_response(self, mock_create):
         """Test get_llm_response convenience function"""
         # Mock provider

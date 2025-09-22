@@ -79,7 +79,7 @@ def validate_fileplan_and_outputs(
     invalid = []
     missing = []
     for item in plan:
-        rel = item.path.lstrip("/\\")
+        rel = item.name.lstrip("/\\")
         if rel in seen:
             duplicates.append(rel)
         seen.add(rel)
