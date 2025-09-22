@@ -138,25 +138,26 @@ jobs:
     
     - name: Create Release
       id: create_release
-      uses: actions/create-release@v1
+      run: |
+        # Create release using GitHub CLI
+        gh release create ${{ github.ref_name }} \
+          --title "Release ${{ steps.changelog.outputs.version }}" \
+          --notes "${{ steps.changelog.outputs.changelog }}" \
+          --generate-notes=false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ steps.changelog.outputs.version }}
-        body: ${{ steps.changelog.outputs.changelog }}
-        draft: false
-        prerelease: false
     
     - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
+      run: |
+        # Upload individual distribution files using GitHub CLI
+        for file in dist/*; do
+          if [ -f "$file" ]; then
+            echo "Uploading $file"
+            gh release upload ${{ github.ref_name }} "$file"
+          fi
+        done
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/
-        asset_name: agent-control-hub-${{ steps.changelog.outputs.version }}-dist
-        asset_content_type: application/zip
 
   notify:
     needs: [publish-pypi, create-release]
