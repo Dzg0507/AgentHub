@@ -27,14 +27,30 @@ WORKSPACE_DIR = Path("workspace")
 TEMP_TTL_MINUTES = 60
 
 # Configure logging
-# Ensure logs directory exists
-os.makedirs("logs", exist_ok=True)
+# Check if we're in CI environment (GitHub Actions)
+is_ci = os.getenv("CI") == "true" or os.getenv("GITHUB_ACTIONS") == "true"
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler("logs/agent_hub.log"), logging.StreamHandler()],
-)
+if is_ci:
+    # In CI, only use console logging
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[logging.StreamHandler()],
+    )
+else:
+    # In local environment, use both file and console logging
+    try:
+        os.makedirs("logs", exist_ok=True)
+        log_file = "logs/agent_hub.log"
+    except Exception:
+        log_file = "agent_hub.log"
+    
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
+    )
+
 logger = logging.getLogger(__name__)
 
 # Global projects store (will be set by the main app)
