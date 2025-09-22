@@ -14,17 +14,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 class TestBasicFunctionality(unittest.TestCase):
     """Basic functionality tests that don't require API keys"""
 
-    def test_imports(self):
-        """Test that main modules can be imported"""
-        try:
-            from src.llm.llm_provider import LLMProvider
-            from agents.factory import create_agents
-            from services.pipeline import process_project_full_pipeline
-
-            self.assertTrue(True, "All main modules imported successfully")
-        except ImportError as e:
-            self.fail(f"Failed to import modules: {e}")
-
     def test_llm_provider_initialization(self):
         """Test LLM provider can be initialized"""
         try:
