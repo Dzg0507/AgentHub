@@ -107,6 +107,7 @@ def validate_fileplan_and_outputs(
             if not candidate_py.exists() and not candidate_pkg.exists():
                 missing_imports.append(mod)
     return {
+        "valid": len(duplicates) == 0 and len(invalid) == 0 and len(missing) == 0,
         "duplicates": duplicates,
         "invalid": invalid,
         "missing_files": sorted(set(missing)),
